@@ -29,7 +29,7 @@ export const VEHICLE = {
     'Pantalla táctil 12.3"',
     'Sistema de sonido Bose premium',
     'Techo panorámico',
-    'Asientos de cuero ventilados',
+    'Asientos de tela',
     'Cámara 360°',
     'Sensores de estacionamiento',
     'Control de crucero adaptativo',
@@ -107,6 +107,6 @@ export const FEATURES = [
   {
     icon: 'Sparkles',
     title: 'Full Equipamiento',
-    description: 'Techo panorámico, asientos de cuero ventilados, sonido Bose premium y climatizador trizona.'
+    description: 'Techo panorámico, asientos de tela ventilados, sonido Bose premium y climatizador trizona.'
   }
 ];

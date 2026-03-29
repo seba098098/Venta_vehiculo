@@ -21,8 +21,8 @@ const Footer = () => {
             </div>
             
             <p className="text-text-secondary mb-6 max-w-md">
-              Tu concesionario de confianza para la Nissan X-Trail 2023 T30 AWD. 
-              Ofrecemos el mejor servicio y las mejores condiciones para tu nuevo vehículo.
+              Tu carro de confianza es la Nissan X-Trail 2023 T30 AWD. 
+              Te Ofrecemos el mejor vehiculo y el mejores precio del mercado.
             </p>
 
             <Button 

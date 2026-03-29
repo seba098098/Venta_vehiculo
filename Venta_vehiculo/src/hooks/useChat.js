@@ -1,5 +1,5 @@
 import { useState, useCallback, useRef, useEffect } from 'react';
-import { getResponse, getWelcomeMessage, shouldShowWhatsAppButton, shouldStartAppointment } from '../utils/chatEngine';
+import { getResponse, getWelcomeMessage, shouldShowWhatsAppButton } from '../utils/chatEngine';
 
 const INITIAL_MESSAGE = {
   id: 'welcome',
@@ -34,7 +34,7 @@ export const useChat = () => {
 
   const addMessage = useCallback((text, type = 'bot', quickActions = [], action = null) => {
     const newMessage = {
-      id: Date.now().toString(),
+      id: Date.now().toString() + Math.random().toString(36).substr(2, 9),
       type,
       text,
       quickActions,
@@ -64,16 +64,16 @@ export const useChat = () => {
     if (response.action === 'appointment' && !appointmentStep) {
       setAppointmentStep('name');
       addMessage(
-        '¡Perfecto! Me encantaría agendar una cita para ti. 🇺🇸\n\nPrimero, ¿Cuál es tu nombre?',
+        '¡Perfecto! Me encantaría agendar una cita para ti.\n\nPrimero, ¿Cuál es tu nombre?',
         'bot',
         [],
-        'appointment'
+        'appointment_name'
       );
       return;
     }
 
     if (appointmentStep) {
-      handleAppointmentFlow(text, response);
+      handleAppointmentFlow(text);
       return;
     }
 
@@ -87,60 +87,46 @@ export const useChat = () => {
     );
   }, [addMessage, simulateTyping, appointmentStep]);
 
-  const handleAppointmentFlow = async (input, response) => {
+  const handleAppointmentFlow = useCallback((input) => {
     switch (appointmentStep) {
       case 'name':
         setAppointmentData(prev => ({ ...prev, name: input }));
         setAppointmentStep('phone');
         addMessage(
-          `¡Hola ${input}! 👋\n\nAhora necesito tu número de teléfono para contactarte.`,
+          `¡Hola ${input}!\n\nAhora necesito tu número de teléfono para contactarte.`,
           'bot',
           [],
-          'appointment'
+          'appointment_phone'
         );
         break;
 
       case 'phone':
         setAppointmentData(prev => ({ ...prev, phone: input }));
-        setAppointmentStep('date');
+        setAppointmentStep('calendar');
         addMessage(
-          'Perfecto. 📅\n\n¿Para qué fecha te gustaría agendar la cita? (DD/MM/AAAA)',
+          'Perfecto.\n\nSelecciona la fecha y hora para tu cita.',
           'bot',
           [],
-          'appointment'
-        );
-        break;
-
-      case 'date':
-        setAppointmentData(prev => ({ ...prev, date: input }));
-        setAppointmentStep('time');
-        addMessage(
-          'Excelente. 🕐\n\n¿A qué hora prefieres?\n\nNuestros horarios disponibles:\n• 9:00 AM\n• 10:00 AM\n• 11:00 AM\n• 2:00 PM\n• 3:00 PM\n• 4:00 PM',
-          'bot',
-          [],
-          'appointment'
-        );
-        break;
-
-      case 'time':
-        setAppointmentData(prev => ({ ...prev, time: input }));
-        await simulateTyping();
-        setAppointmentStep('confirm');
-        
-        const { name, phone, date, time } = { ...appointmentData, time: input };
-        
-        addMessage(
-          `¡Listo! Tu cita está por confirmarse. 📝\n\n*Resumen:*\n• Nombre: ${name}\n• Teléfono: ${phone}\n• Fecha: ${date}\n• Hora: ${time}\n\n¿Confirmas la cita?`,
-          'bot',
-          ['Confirmar cita', 'Corregir datos'],
-          'confirm'
+          'appointment_calendar'
         );
         break;
 
       default:
-        addMessage(response.text, 'bot', response.quickActions);
+        break;
     }
-  };
+  }, [appointmentStep, addMessage]);
+
+  const handleDateTimeSelection = useCallback((date, time) => {
+    setAppointmentData(prev => ({ ...prev, date, time }));
+    setAppointmentStep('confirm');
+    
+    addMessage(
+      `¡Listo! Tu cita está por confirmarse.\n\n*Resumen:*\n• Nombre: ${appointmentData.name}\n• Teléfono: ${appointmentData.phone}\n• Fecha: ${date}\n• Hora: ${time}`,
+      'bot',
+      [],
+      'appointment_confirm'
+    );
+  }, [addMessage, appointmentData]);
 
   const handleQuickAction = useCallback(async (action) => {
     let message = '';
@@ -166,16 +152,14 @@ export const useChat = () => {
         break;
       case 'Continuar por WhatsApp':
         return 'openWhatsApp';
-      case 'Confirmar cita':
-        return 'confirmAppointment';
       case 'Corregir datos':
         setAppointmentStep('name');
         setAppointmentData({ name: '', phone: '', date: '', time: '' });
         addMessage(
-          'Entendido, volvamos a empezar. 🇺🇸\n\n¿Cuál es tu nombre?',
+          'Entendido, volvamos a empezar.\n\n¿Cuál es tu nombre?',
           'bot',
           [],
-          'appointment'
+          'appointment_name'
         );
         return;
       default:
@@ -188,12 +172,14 @@ export const useChat = () => {
   const confirmAppointment = useCallback(() => {
     setAppointmentStep('completed');
     addMessage(
-      `¡Cita confirmada! 🎉\n\nTe esperamos el ${appointmentData.date} a las ${appointmentData.time}.\n\nTe recomiendo confirmar por WhatsApp para recibir un recordatorio.`,
+      `¡Cita confirmada!\n\nTe esperamos el ${appointmentData.date} a las ${appointmentData.time}.\n\n¡Hasta pronto!`,
       'bot',
-      ['Confirmar por WhatsApp'],
+      [],
       'completed'
     );
   }, [appointmentData, addMessage]);
+
+  const getAppointmentData = useCallback(() => appointmentData, [appointmentData]);
 
   const resetAppointment = useCallback(() => {
     setAppointmentStep(null);
@@ -212,7 +198,9 @@ export const useChat = () => {
     toggleChat,
     handleSendMessage,
     handleQuickAction,
+    handleDateTimeSelection,
     confirmAppointment,
+    getAppointmentData,
     resetAppointment,
     appointmentData,
     appointmentStep

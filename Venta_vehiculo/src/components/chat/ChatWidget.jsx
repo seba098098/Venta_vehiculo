@@ -1,14 +1,12 @@
 import { useState, useEffect } from 'react';
-import { X, MessageCircle, Bot, Phone } from 'lucide-react';
+import { X, MessageCircle, Bot } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import ChatMessage from './ChatMessage';
 import ChatInput from './ChatInput';
 import TypingIndicator from './TypingIndicator';
 import DateTimePicker from './DateTimePicker';
 import { useChat } from '../../hooks/useChat';
-import { openWhatsApp, MESSAGES } from '../../utils/whatsapp';
-import { sendAppointmentEmail } from '../../utils/email';
-import { CONTACT } from '../../config/vehicle';
+import { openWhatsApp } from '../../utils/whatsapp';
 
 const ChatWidget = () => {
   const {
@@ -19,43 +17,54 @@ const ChatWidget = () => {
     toggleChat,
     handleSendMessage,
     handleQuickAction,
-    confirmAppointment,
+    handleDateTimeSelection,
     appointmentData,
     appointmentStep
   } = useChat();
 
   const [showDatePicker, setShowDatePicker] = useState(false);
+  const [calendarMounted, setCalendarMounted] = useState(false);
+
+  useEffect(() => {
+    if (appointmentStep === 'calendar' && !showDatePicker) {
+      setShowDatePicker(true);
+      setCalendarMounted(true);
+    }
+  }, [appointmentStep, showDatePicker]);
 
   const handleActionClick = (action) => {
-    if (action === 'Continuar por WhatsApp') {
-      openWhatsApp('interest');
-      return;
+    switch (action) {
+      case 'Continuar por WhatsApp':
+        openWhatsApp('interest');
+        break;
+      case 'Corregir datos':
+        handleQuickAction(action);
+        setShowDatePicker(false);
+        setCalendarMounted(false);
+        break;
+      default:
+        handleQuickAction(action);
     }
-    if (action === 'Confirmar por WhatsApp') {
-      openWhatsApp('appointment', appointmentData);
-      return;
-    }
-    if (action === 'Confirmar cita') {
-      handleQuickAction(action);
-      return;
-    }
-    if (action === 'Corregir datos') {
-      handleQuickAction(action);
-      return;
-    }
-    handleQuickAction(action);
   };
 
   const handleDateSelect = (selection) => {
-    handleSendMessage(`${selection.date} a las ${selection.time}`);
     setShowDatePicker(false);
+    
+    setTimeout(() => {
+      handleDateTimeSelection(selection.date, selection.time);
+      
+      setTimeout(() => {
+        openWhatsApp('appointment', {
+          name: appointmentData.name,
+          phone: appointmentData.phone,
+          date: selection.date,
+          time: selection.time
+        });
+      }, 800);
+    }, 300);
   };
 
-  useEffect(() => {
-    if (appointmentStep === 'date' && !showDatePicker) {
-      setShowDatePicker(true);
-    }
-  }, [appointmentStep, showDatePicker]);
+  const shouldShowDatePicker = appointmentStep === 'calendar' && calendarMounted;
 
   return (
     <>
@@ -87,58 +96,31 @@ const ChatWidget = () => {
             </div>
 
             <div className="flex-1 overflow-y-auto p-4 chat-scroll">
-              {messages.map((message) => (
-                <div key={message.id}>
-                  {message.action === 'appointment' && showDatePicker && appointmentStep === 'date' ? (
-                    <div className="mb-4">
-                      <ChatMessage 
-                        message={message} 
-                        onQuickAction={handleActionClick}
-                      />
-                      <motion.div
-                        initial={{ opacity: 0, y: 10 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        className="mt-4"
-                      >
-                        <DateTimePicker onSelect={handleDateSelect} />
-                      </motion.div>
-                    </div>
-                  ) : message.action === 'confirm' ? (
-                    <div className="mb-4">
-                      <ChatMessage 
-                        message={message} 
-                        onQuickAction={handleActionClick}
-                      />
-                      <motion.div
-                        initial={{ opacity: 0, y: 10 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        className="mt-4"
-                      >
-                        <button
-                          onClick={async () => {
-                            const result = await sendAppointmentEmail({
-                              name: appointmentData.name,
-                              phone: appointmentData.phone,
-                              date: appointmentData.date,
-                              time: appointmentData.time,
-                              message: 'Cita agendada desde landing page'
-                            });
-                            confirmAppointment();
-                          }}
-                          className="w-full py-3 bg-accent text-background font-semibold rounded-xl hover:bg-accent-dark transition-colors"
-                        >
-                          Confirmar y Enviar Email
-                        </button>
-                      </motion.div>
-                    </div>
-                  ) : (
+              {messages.map((message, index) => {
+                const isLastCalendarMessage = 
+                  message.action === 'appointment_calendar' && 
+                  index === messages.length - 1;
+
+                return (
+                  <div key={message.id}>
                     <ChatMessage 
                       message={message} 
                       onQuickAction={handleActionClick}
                     />
-                  )}
-                </div>
-              ))}
+                    
+                    {shouldShowDatePicker && isLastCalendarMessage && (
+                      <motion.div
+                        initial={{ opacity: 0, y: 20 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ delay: 0.3 }}
+                        className="mt-4"
+                      >
+                        <DateTimePicker onSelect={handleDateSelect} />
+                      </motion.div>
+                    )}
+                  </div>
+                );
+              })}
               
               {isTyping && <TypingIndicator />}
               
