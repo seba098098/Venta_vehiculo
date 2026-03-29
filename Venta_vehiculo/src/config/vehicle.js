@@ -61,8 +61,8 @@ export const CONTACT = {
 };
 
 export const GALLERY_IMAGES = [
-  { id: 1, url: '/img/nissan1.jpg', alt: 'Vista lateral' },
-  { id: 2, url: 'https://images.unsplash.com/photo-1606664515524-ed2f786a0bd6?w=800', alt: 'Vista lateral' },
+  { id: 1, url: '/img/nissan1.jpg', alt: 'Vista lateral atras derecho' },
+  { id: 2, url: '/img/nissan2.jpg', alt: 'Vista lateral frente izquierdo' },
   { id: 3, url: 'https://images.unsplash.com/photo-1494976388531-d1058494cdd8?w=800', alt: 'Vista posterior' },
   { id: 4, url: 'https://images.unsplash.com/photo-1503376780353-7e6692767b70?w=800', alt: 'Interior - Panel' },
   { id: 5, url: 'https://images.unsplash.com/photo-1552519507-da3b142c6e3d?w=800', alt: 'Interior - Asientos' },

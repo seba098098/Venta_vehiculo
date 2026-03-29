@@ -110,16 +110,15 @@ const Footer = () => {
       <motion.div
         initial={{ y: 100 }}
         animate={{ y: 0 }}
-        className="fixed bottom-20 md:bottom-4 left-4 right-4 md:left-auto md:right-4 md:w-auto z-30"
+        className="fixed bottom-4 right-4 z-40"
       >
         <Button
           variant="whatsapp"
           icon={MessageCircle}
           onClick={() => openWhatsApp('interest')}
-          className="shadow-lg w-full md:w-auto"
+          className="shadow-lg"
         >
-          <span className="hidden sm:inline">¿Interesado?</span>
-          <span className="sm:hidden">WhatsApp</span>
+          ¿Interesado?
         </Button>
       </motion.div>
     </footer>

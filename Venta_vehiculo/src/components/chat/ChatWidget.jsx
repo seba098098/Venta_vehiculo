@@ -66,7 +66,7 @@ const ChatWidget = () => {
             animate={{ opacity: 1, scale: 1, y: 0 }}
             exit={{ opacity: 0, scale: 0.9, y: 20 }}
             transition={{ duration: 0.3 }}
-            className="fixed bottom-24 right-4 w-[380px] h-[600px] max-h-[calc(100vh-120px)] bg-secondary rounded-2xl shadow-2xl flex flex-col overflow-hidden z-50 border border-white/10"
+            className="fixed bottom-32 right-4 w-[380px] h-[600px] max-h-[calc(100vh-120px)] bg-secondary rounded-2xl shadow-2xl flex flex-col overflow-hidden z-50 border border-white/10"
           >
             <div className="flex items-center justify-between p-4 bg-surface-light border-b border-white/10">
               <div className="flex items-center gap-3">
@@ -160,7 +160,7 @@ const ChatWidget = () => {
         whileTap={{ scale: 0.95 }}
         onClick={toggleChat}
         className={`
-          fixed bottom-4 right-4 w-14 h-14 rounded-full shadow-lg z-50
+          fixed bottom-24 right-4 w-14 h-14 rounded-full shadow-lg z-50
           flex items-center justify-center transition-all
           ${isOpen 
             ? 'bg-surface-light hover:bg-surface' 
@@ -197,7 +197,7 @@ const ChatWidget = () => {
         <motion.div
           initial={{ opacity: 0, x: 20 }}
           animate={{ opacity: 1, x: 0 }}
-          className="fixed bottom-20 right-4 bg-surface-light px-4 py-2 rounded-lg shadow-lg z-40 hidden md:block"
+          className="fixed bottom-24 right-20 bg-surface-light px-4 py-2 rounded-lg shadow-lg z-40 hidden md:block"
         >
           <p className="text-sm text-white">¿Tienes preguntas? <span className="text-accent">Chatea con nosotros</span></p>
         </motion.div>

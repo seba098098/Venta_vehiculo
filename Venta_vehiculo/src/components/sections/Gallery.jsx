@@ -108,49 +108,53 @@ const Gallery = () => {
             </div>
           </div>
 
-          <button
-            onClick={() => scrollThumbnails('left')}
-            className="absolute left-0 top-1/2 -translate-y-1/2 -translate-x-2 p-2 bg-surface border border-white/10 rounded-full text-white hover:bg-surface-light transition-colors hidden md:block"
-          >
-            <ChevronLeft className="w-5 h-5" />
-          </button>
+          <div className="relative mt-4">
+            <div 
+              ref={thumbnailsRef}
+              className="flex gap-3 overflow-x-auto scrollbar-hide pb-2 snap-x snap-mandatory px-2"
+              style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}
+            >
+              {GALLERY_IMAGES.map((image, index) => (
+                <motion.button
+                  key={image.id}
+                  initial={{ opacity: 0, y: 20 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ delay: index * 0.05 }}
+                  onClick={() => goToSlide(index)}
+                  className={`
+                    flex-shrink-0 w-24 h-16 md:w-32 md:h-20 rounded-lg overflow-hidden
+                    snap-center transition-all duration-200
+                    ${currentIndex === index 
+                      ? 'ring-2 ring-accent scale-105' 
+                      : 'opacity-60 hover:opacity-100'
+                    }
+                  `}
+                >
+                  <img
+                    src={image.url}
+                    alt={image.alt}
+                    className="w-full h-full object-cover"
+                  />
+                </motion.button>
+              ))}
+            </div>
 
-          <button
-            onClick={() => scrollThumbnails('right')}
-            className="absolute right-0 top-1/2 -translate-y-1/2 translate-x-2 p-2 bg-surface border border-white/10 rounded-full text-white hover:bg-surface-light transition-colors hidden md:block"
-          >
-            <ChevronRight className="w-5 h-5" />
-          </button>
+            <button
+              onClick={() => scrollThumbnails('left')}
+              className="absolute left-0 top-1/2 -translate-y-1/2 -translate-x-3 p-2 bg-surface border border-white/10 rounded-full text-white hover:bg-surface-light transition-all z-10 hidden md:flex items-center justify-center"
+              style={{ height: 'calc(4rem + 8px)' }}
+            >
+              <ChevronLeft className="w-5 h-5" />
+            </button>
 
-          <div 
-            ref={thumbnailsRef}
-            className="mt-4 flex gap-3 overflow-x-auto scrollbar-hide pb-2 snap-x snap-mandatory"
-            style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}
-          >
-            {GALLERY_IMAGES.map((image, index) => (
-              <motion.button
-                key={image.id}
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ delay: index * 0.05 }}
-                onClick={() => goToSlide(index)}
-                className={`
-                  flex-shrink-0 w-24 h-16 md:w-32 md:h-20 rounded-lg overflow-hidden
-                  snap-center transition-all duration-200
-                  ${currentIndex === index 
-                    ? 'ring-2 ring-accent scale-105' 
-                    : 'opacity-60 hover:opacity-100'
-                  }
-                `}
-              >
-                <img
-                  src={image.url}
-                  alt={image.alt}
-                  className="w-full h-full object-cover"
-                />
-              </motion.button>
-            ))}
+            <button
+              onClick={() => scrollThumbnails('right')}
+              className="absolute right-0 top-1/2 -translate-y-1/2 translate-x-3 p-2 bg-surface border border-white/10 rounded-full text-white hover:bg-surface-light transition-all z-10 hidden md:flex items-center justify-center"
+              style={{ height: 'calc(4rem + 8px)' }}
+            >
+              <ChevronRight className="w-5 h-5" />
+            </button>
           </div>
         </div>
       </div>
