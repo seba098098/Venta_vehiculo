@@ -47,7 +47,7 @@ export const VEHICLE = {
 };
 
 export const CONTACT = {
-  whatsapp: '3106031601',
+  whatsapp: '573106031601',
   email: 'seba098098@gmail.com',
   emailJS: {
     serviceId: 'service_xrail2023',
@@ -63,19 +63,14 @@ export const CONTACT = {
 export const GALLERY_IMAGES = [
   { id: 1, url: '/img/nissan1.jpg', alt: 'Vista lateral atras derecho' },
   { id: 2, url: '/img/nissan2.jpg', alt: 'Vista lateral frente izquierdo' },
-  { id: 3, url: 'https://images.unsplash.com/photo-1494976388531-d1058494cdd8?w=800', alt: 'Vista posterior' },
-  { id: 4, url: 'https://images.unsplash.com/photo-1503376780353-7e6692767b70?w=800', alt: 'Interior - Panel' },
-  { id: 5, url: 'https://images.unsplash.com/photo-1552519507-da3b142c6e3d?w=800', alt: 'Interior - Asientos' },
-  { id: 6, url: 'https://images.unsplash.com/photo-1542362567-b07e54358753?w=800', alt: 'Consola central' },
-  { id: 7, url: 'https://images.unsplash.com/photo-1544636331-e26879cd4d9b?w=800', alt: 'Vista tres cuartos' },
-  { id: 8, url: 'https://images.unsplash.com/photo-1552519507-da3b142c6e3d?w=800', alt: 'Ruedas' },
-  { id: 9, url: 'https://images.unsplash.com/photo-1502877338535-766e1452684a?w=800', alt: 'Detalle frontal' },
-  { id: 10, url: 'https://images.unsplash.com/photo-1493238792000-8113da705763?w=800', alt: 'Faros LED' },
-  { id: 11, url: 'https://images.unsplash.com/photo-1552519507-da3b142c6e3d?w=800', alt: 'Vista nocturna' },
-  { id: 12, url: 'https://images.unsplash.com/photo-1549317661-bd32c8ce0db2?w=800', alt: 'Cajuela abierta' },
-  { id: 13, url: 'https://images.unsplash.com/photo-1503376780353-7e6692767b70?w=800', alt: 'Tercera fila asientos' },
-  { id: 14, url: 'https://images.unsplash.com/photo-1552519507-da3b142c6e3d?w=800', alt: 'Modo off-road' },
-  { id: 15, url: 'https://images.unsplash.com/photo-1494976388531-d1058494cdd8?w=800', alt: 'Pantalla multimedia' }
+  { id: 3, url: '/img/nissan3.jpg', alt: 'Vista posterior' },
+  { id: 4, url: '/img/nissan4.jpg', alt: 'Vista lateral frente Izquierda' },
+  { id: 5, url: '/img/nissan5.jpg', alt: 'Vista posterior izquierda' },
+  { id: 6, url: '/img/nissan6.jpg', alt: 'Consola central' },
+  { id: 7, url: '/img/nissan7.jpg', alt: 'Vista tres cuartos' },
+  { id: 8, url: '/img/nissan8.jpg', alt: 'Ruedas' },
+  { id: 9, url: '/img/nissan9.jpg', alt: 'Detalle frontal' },
+  { id: 10, url: '/img/nissan10.jpg', alt: 'Faros LED' }
 ];
 
 export const FEATURES = [
