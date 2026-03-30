@@ -62,7 +62,7 @@ ${getExtrasList().substring(0, 300)}...`,
 ${getExtrasList()}
 
 ¿Te gustaría ver el vehículo en persona? Puedo agendar una cita para que lo conozcas.`,
-    quickActions: ['Agendar cita', 'Ver galería', 'WhatsApp']
+    quickActions: ['Agendar cita', 'WhatsApp']
   },
 
   kilometraje: {

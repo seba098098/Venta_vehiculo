@@ -85,7 +85,7 @@ const Hero = () => {
               size="lg"
               icon={MessageCircle}
               onClick={() => openWhatsApp('interest')}
-              className="w-full sm:w-auto"
+              className="w-full sm:w-auto text-sm sm:text-base px-4 py-2 sm:px-6 sm:py-3"
             >
               Me interesa
             </Button>
@@ -96,7 +96,7 @@ const Hero = () => {
               onClick={() => {
                 document.querySelector('#caracteristicas')?.scrollIntoView({ behavior: 'smooth' });
               }}
-              className="w-full sm:w-auto"
+              className="w-full sm:w-auto text-sm sm:text-base px-4 py-2 sm:px-6 sm:py-3"
             >
               Conocer más
             </Button>
