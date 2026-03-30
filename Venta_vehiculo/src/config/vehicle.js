@@ -63,7 +63,6 @@ export const GALLERY_IMAGES = [
   { id: 1, url: '/img/nissan1.jpg', alt: 'Vista lateral atras derecho' },
   { id: 2, url: '/img/nissan2.jpg', alt: 'Vista lateral frente izquierdo' },
   { id: 3, url: '/img/nissan3.jpg', alt: 'Vista posterior' },
-  { id: 4, url: '/img/nissan4.jpg', alt: 'Vista lateral frente Izquierda' },
   { id: 5, url: '/img/nissan5.jpg', alt: 'Vista posterior izquierda' },
   { id: 6, url: '/img/nissan6.jpg', alt: 'Consola central' },
   { id: 7, url: '/img/nissan7.jpg', alt: 'Vista tres cuartos' },
