@@ -1,25 +1,53 @@
-import { useState, useRef, useEffect } from 'react';
+import { useState, useRef, useEffect, useCallback } from 'react';
 import { ChevronLeft, ChevronRight, X, ZoomIn } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { GALLERY_IMAGES } from '../../config/vehicle';
 
+const DOUBLE_TAP_DELAY = 300;
+
 const Gallery = () => {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [isLightboxOpen, setIsLightboxOpen] = useState(false);
+  const [showZoomHint, setShowZoomHint] = useState(true);
+
   const thumbnailsRef = useRef(null);
+  const lastTapRef = useRef(0);
+
+  const isMobile = typeof window !== 'undefined' &&
+    ('ontouchstart' in window || navigator.maxTouchPoints > 0);
+
+  // 🔥 Handler unificado (desktop + mobile)
+  const handleImageInteraction = useCallback((e) => {
+    const now = Date.now();
+
+    if (isMobile) {
+      // doble tap
+      if (now - lastTapRef.current < DOUBLE_TAP_DELAY) {
+        openLightbox(currentIndex);
+        lastTapRef.current = 0;
+      } else {
+        lastTapRef.current = now;
+      }
+    } else {
+      // doble click real
+      if (e.detail === 2) {
+        openLightbox(currentIndex);
+      }
+    }
+  }, [currentIndex, isMobile]);
+
+  useEffect(() => {
+    const timer = setTimeout(() => setShowZoomHint(false), 4000);
+    return () => clearTimeout(timer);
+  }, []);
 
   const scrollThumbnails = (direction) => {
     if (thumbnailsRef.current) {
-      const scrollAmount = 200;
       thumbnailsRef.current.scrollBy({
-        left: direction === 'left' ? -scrollAmount : scrollAmount,
+        left: direction === 'left' ? -200 : 200,
         behavior: 'smooth'
       });
     }
-  };
-
-  const goToSlide = (index) => {
-    setCurrentIndex(index);
   };
 
   const nextSlide = () => {
@@ -28,6 +56,10 @@ const Gallery = () => {
 
   const prevSlide = () => {
     setCurrentIndex((prev) => (prev - 1 + GALLERY_IMAGES.length) % GALLERY_IMAGES.length);
+  };
+
+  const goToSlide = (index) => {
+    setCurrentIndex(index);
   };
 
   const openLightbox = (index) => {
@@ -51,163 +83,92 @@ const Gallery = () => {
   return (
     <section id="galeria" className="py-20 bg-surface">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          className="text-center mb-12"
-        >
+
+        {/* HEADER */}
+        <div className="text-center mb-12">
           <span className="inline-block px-4 py-1 bg-primary/10 text-primary text-sm font-medium rounded-full mb-4">
             Galería
           </span>
           <h2 className="text-3xl md:text-4xl font-bold text-white mb-4">
             Imágenes del Vehículo
           </h2>
-          <p className="text-text-secondary max-w-2xl mx-auto">
-            Explora cada detalle de la Nissan X-Trail 2023
-          </p>
-        </motion.div>
+        </div>
 
-        <div className="relative">
-          <div className="relative aspect-video rounded-2xl overflow-hidden bg-background group">
-            <motion.img
-              key={currentIndex}
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ duration: 0.3 }}
-              src={GALLERY_IMAGES[currentIndex].url}
-              alt={GALLERY_IMAGES[currentIndex].alt}
-              className="w-full h-full object-cover"
-            />
-            
-            <div className="absolute inset-0 bg-gradient-to-t from-background/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
+        {/* IMAGEN PRINCIPAL */}
+        <div
+          className="relative aspect-video rounded-2xl overflow-hidden bg-background group mx-auto max-w-5xl cursor-zoom-in"
+          onClick={handleImageInteraction}
+        >
+          <motion.img
+            key={currentIndex}
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ duration: 0.3 }}
+            src={GALLERY_IMAGES[currentIndex].url}
+            alt={GALLERY_IMAGES[currentIndex].alt}
+            className="w-full h-full object-cover"
+          />
 
-            <button
-              onClick={() => openLightbox(currentIndex)}
-              className="absolute top-4 right-4 p-3 bg-black/50 backdrop-blur-sm rounded-full text-white hover:bg-black/70 transition-colors opacity-0 group-hover:opacity-100"
-            >
-              <ZoomIn className="w-5 h-5" />
-            </button>
+          {/* overlay FIX */}
+          <div className="absolute inset-0 bg-gradient-to-t from-background/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none" />
 
-            <button
-              onClick={prevSlide}
-              className="absolute left-4 top-1/2 -translate-y-1/2 p-3 bg-black/50 backdrop-blur-sm rounded-full text-white hover:bg-black/70 transition-all opacity-0 group-hover:opacity-100"
-            >
-              <ChevronLeft className="w-6 h-6" />
-            </button>
+          {/* botón zoom */}
+          <button
+            onClick={() => openLightbox(currentIndex)}
+            className="absolute top-4 right-4 p-3 bg-black/50 rounded-full text-white opacity-0 group-hover:opacity-100 z-10"
+          >
+            <ZoomIn />
+          </button>
 
-            <button
-              onClick={nextSlide}
-              className="absolute right-4 top-1/2 -translate-y-1/2 p-3 bg-black/50 backdrop-blur-sm rounded-full text-white hover:bg-black/70 transition-all opacity-0 group-hover:opacity-100"
-            >
-              <ChevronRight className="w-6 h-6" />
-            </button>
+          {/* navegación */}
+          <button onClick={prevSlide} className="absolute left-4 top-1/2 -translate-y-1/2 z-10">
+            <ChevronLeft />
+          </button>
 
-            <div className="absolute bottom-4 left-1/2 -translate-x-1/2 bg-black/60 backdrop-blur-sm px-4 py-2 rounded-full text-white text-sm">
-              {currentIndex + 1} / {GALLERY_IMAGES.length}
+          <button onClick={nextSlide} className="absolute right-4 top-1/2 -translate-y-1/2 z-10">
+            <ChevronRight />
+          </button>
+
+          {/* hint */}
+          {showZoomHint && (
+            <div className="absolute bottom-4 left-4 bg-black/60 px-3 py-1 rounded text-white text-xs">
+              {isMobile ? 'Doble tap para ampliar' : 'Doble clic para ampliar'}
             </div>
+          )}
+
+          {/* contador */}
+          <div className="absolute bottom-4 right-4 bg-black/60 px-3 py-1 rounded text-white text-xs">
+            {currentIndex + 1} / {GALLERY_IMAGES.length}
           </div>
+        </div>
 
-          <div className="relative mt-4">
-            <div 
-              ref={thumbnailsRef}
-              className="flex gap-3 overflow-x-auto scrollbar-hide pb-2 snap-x snap-mandatory px-2"
-              style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}
-            >
-              {GALLERY_IMAGES.map((image, index) => (
-                <motion.button
-                  key={image.id}
-                  initial={{ opacity: 0, y: 20 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  viewport={{ once: true }}
-                  transition={{ delay: index * 0.05 }}
-                  onClick={() => goToSlide(index)}
-                  className={`
-                    flex-shrink-0 w-24 h-16 md:w-32 md:h-20 rounded-lg overflow-hidden
-                    snap-center transition-all duration-200
-                    ${currentIndex === index 
-                      ? 'ring-2 ring-accent scale-105' 
-                      : 'opacity-60 hover:opacity-100'
-                    }
-                  `}
-                >
-                  <img
-                    src={image.url}
-                    alt={image.alt}
-                    className="w-full h-full object-cover"
-                  />
-                </motion.button>
-              ))}
-            </div>
-
-            <button
-              onClick={() => scrollThumbnails('left')}
-              className="absolute left-0 top-1/2 -translate-y-1/2 -translate-x-3 p-2 bg-surface border border-white/10 rounded-full text-white hover:bg-surface-light transition-all z-10 hidden md:flex items-center justify-center"
-              style={{ height: 'calc(4rem + 8px)' }}
-            >
-              <ChevronLeft className="w-5 h-5" />
+        {/* THUMBNAILS */}
+        <div className="flex gap-3 mt-4 overflow-x-auto" ref={thumbnailsRef}>
+          {GALLERY_IMAGES.map((img, index) => (
+            <button key={img.id} onClick={() => goToSlide(index)}>
+              <img
+                src={img.url}
+                className={`w-24 h-16 object-cover rounded ${
+                  index === currentIndex ? 'ring-2 ring-accent' : 'opacity-60'
+                }`}
+              />
             </button>
-
-            <button
-              onClick={() => scrollThumbnails('right')}
-              className="absolute right-0 top-1/2 -translate-y-1/2 translate-x-3 p-2 bg-surface border border-white/10 rounded-full text-white hover:bg-surface-light transition-all z-10 hidden md:flex items-center justify-center"
-              style={{ height: 'calc(4rem + 8px)' }}
-            >
-              <ChevronRight className="w-5 h-5" />
-            </button>
-          </div>
+          ))}
         </div>
       </div>
 
+      {/* LIGHTBOX */}
       <AnimatePresence>
         {isLightboxOpen && (
           <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            className="fixed inset-0 z-50 flex items-center justify-center bg-black/95 backdrop-blur-sm"
+            className="fixed inset-0 bg-black/95 flex items-center justify-center z-50"
             onClick={() => setIsLightboxOpen(false)}
           >
-            <button
-              onClick={() => setIsLightboxOpen(false)}
-              className="absolute top-4 right-4 p-2 text-white/70 hover:text-white transition-colors z-10"
-            >
-              <X className="w-8 h-8" />
-            </button>
-
-            <button
-              onClick={(e) => { e.stopPropagation(); prevSlide(); }}
-              className="absolute left-4 p-3 text-white/70 hover:text-white hover:bg-white/10 rounded-full transition-all z-10"
-            >
-              <ChevronLeft className="w-8 h-8" />
-            </button>
-
-            <motion.img
-              key={currentIndex}
-              initial={{ opacity: 0, scale: 0.9 }}
-              animate={{ opacity: 1, scale: 1 }}
-              exit={{ opacity: 0, scale: 0.9 }}
-              transition={{ duration: 0.3 }}
+            <img
               src={GALLERY_IMAGES[currentIndex].url}
-              alt={GALLERY_IMAGES[currentIndex].alt}
-              className="max-w-[90vw] max-h-[85vh] object-contain rounded-lg"
+              className="max-w-[90vw] max-h-[90vh]"
               onClick={(e) => e.stopPropagation()}
             />
-
-            <button
-              onClick={(e) => { e.stopPropagation(); nextSlide(); }}
-              className="absolute right-4 p-3 text-white/70 hover:text-white hover:bg-white/10 rounded-full transition-all z-10"
-            >
-              <ChevronRight className="w-8 h-8" />
-            </button>
-
-            <div className="absolute bottom-4 left-1/2 -translate-x-1/2 bg-black/60 px-4 py-2 rounded-full text-white/80 text-sm">
-              {currentIndex + 1} / {GALLERY_IMAGES.length} — {GALLERY_IMAGES[currentIndex].alt}
-            </div>
-
-            <div className="absolute bottom-12 left-1/2 -translate-x-1/2 text-white/40 text-sm hidden md:block">
-              ← → para navegar • Esc para cerrar
-            </div>
           </motion.div>
         )}
       </AnimatePresence>
