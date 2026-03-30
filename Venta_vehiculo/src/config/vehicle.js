@@ -42,7 +42,6 @@ export const VEHICLE = {
     'Llantas de aleación 20"',
     'Faros LED adaptativos'
   ],
-  garantia: '5 años o 100,000 km',
   condicion: 'Excelente estado, Segundo Dueño'
 };
 

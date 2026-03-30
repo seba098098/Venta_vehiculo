@@ -18,9 +18,8 @@ const RESPONSES = {
 
 Puedo ayudarte con:
 • Información del vehículo
-• Precio y financiación
+• Precio del vehiculo
 • Agendar una cita
-• Cualquier pregunta
 
 ¿En qué puedo ayudarte hoy?`,
     quickActions: ['Precio', 'Características', 'Agendar cita', 'WhatsApp']
@@ -31,26 +30,12 @@ Puedo ayudarte con:
 
 Este precio incluye:
 • Vehículo en excellent estado
-• ${VEHICLE.garantia}
 • Documentación completa
 
-*Opciones de financiación disponibles*
-Pregúntame por los planes de pago flexible.`,
-    quickActions: ['Financiación', 'Características', 'Agendar cita', 'WhatsApp']
-  },
+*Se recibe efectivo o un vehiculo de menor o mayor valor *
 
-  financiacion: {
-    text: `💳 *Opciones de Financiación*
-
-Contamos con planes flexibles:
-
-• *Enganche desde 20%*
-• *Meses desde 12 hasta 72*
-• *Tasa preferencial*
-• *Sin buró de crédito*
-
-Te puedo conectar con nuestro departamento financiero. ¿Te gustaría que agendemos una cita para revisar tus opciones?`,
-    quickActions: ['Agendar cita', 'Precio', 'WhatsApp']
+te puedo ayudar tambien con `,
+    quickActions: ['Características', 'Agendar cita', 'WhatsApp']
   },
 
   caracteristicas: {
@@ -96,6 +81,7 @@ Todos los servicios han sido realizados en agencia con refacciones originales.`,
 • Torque: ${VEHICLE.torque}
 
 Excelente rendimiento combinando potencia y eficiencia de combustible.`,
+
     quickActions: ['Características', 'Consumo', 'Agendar cita']
   },
 

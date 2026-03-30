@@ -28,7 +28,7 @@ const Features = () => {
             Beneficios Exclusivos
           </h2>
           <p className="text-text-secondary max-w-2xl mx-auto">
-            Más que un vehículo, te oferecemos una experiencia completa
+            Más que un vehículo, es una experiencia completa
           </p>
         </motion.div>
 
@@ -59,8 +59,7 @@ const Features = () => {
                 </p>
 
                 <div className="mt-4 flex items-center text-accent text-sm font-medium opacity-0 group-hover:opacity-100 transition-opacity">
-                  <span>Saber más</span>
-                  <ArrowRight className="w-4 h-4 ml-1 group-hover:translate-x-1 transition-transform" />
+                  
                 </div>
               </motion.div>
             );
